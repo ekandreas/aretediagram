@@ -5,7 +5,7 @@ date_default_timezone_set('Europe/Stockholm');
 include_once 'config/deployer_common.php';
 
 server( 'test', 'elseif.se' )
-    ->env('deploy_path','/home/forge/aretediagram')
+    ->env('deploy_path','/home/forge/aretediagram.elseif.se')
     ->user('forge')
     ->env('branch', 'master')
     ->stage('test')
