@@ -11,7 +11,7 @@ server( 'test', 'elseif.se' )
     ->stage('test')
     ->identityFile();
 
-set('repository', 'git@github.com/ekandreas/aretediagram.git');
+set('repository', 'https://github.com/ekandreas/aretediagram.git');
 
 set('env', 'production');
 set('keep_releases', 10);
@@ -21,7 +21,6 @@ set('shared_files', []);
 set('env_vars', '/usr/bin/env');
 
 task('deploy:restart', function () {
-    run("sudo service apache2 reload");
 })->desc('Restarting apache2 and other stuff after deploy');
 
 task( 'deploy', [
