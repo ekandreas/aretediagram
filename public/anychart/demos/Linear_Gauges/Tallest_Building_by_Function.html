@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../../js/anychart.min.js"></script>
+        <script src="../../js/anychart-ui.min.js"></script>
+        
+        
+        
+        <title>Tallest Building by Function</title>
+        <style>
+         html, body, #container {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+         
+anychart.onDocumentReady(function () {
+    // Set gauge type
+    gauge = anychart.gauges.linear();
+
+    // Set credits
+    var credits = gauge.credits();
+    credits.enabled(true);
+    credits.url('//en.wikipedia.org/wiki/List_of_tallest_buildings_and_structures');
+    credits.text('Data source: http://en.wikipedia.org/wiki/List_of_tallest_buildings_and_structures');
+    credits.logoSrc('//en.wikipedia.org/static/favicon/wikipedia.ico');
+
+    // Creates data set on our data
+    gauge.data(data);
+    gauge.padding([0, 0, 30, 0]);
+
+    // Set Chart Title
+    var title = gauge.title();
+    title.enabled(true).useHtml(true).padding([10, 0, 15, 0])
+            .text('Tallest Building by Function<br>' +
+                    '<span style="color: #212121; font-size: 12px">(According to Wikipedia.org)</span>');
+
+    // Helper function to create Bar Series
+    function createBar(i, color) {
+        // Create bar pointer
+        var bar = gauge.bar(i);
+        bar.color(color);
+        // Set pointer offset of the width gauge
+        bar.offset((i * 13) - 10);
+        // Set pointer width
+        bar.width('9%');
+
+        bar.name(data[i].name + '<br/><span style="color: #212121; font-size: 10px">'
+                + data[i].country + ',<br/>' + data[i].city + '</span>');
+
+        // Set pointer label
+        bar.label().enabled(true).position('centerBottom')
+                .offsetY(20).fontSize(11).hAlign('center').textFormatter(function () {
+            return this.getDataValue('category')
+        });
+        bar.hoverLabel().enabled(true).fontColor('#212121').fontWeight('600');
+        bar.selectLabel().enabled(true).fontColor('#212121').fontWeight('600');
+
+        // Set marker pointer
+        var marker = gauge.marker(i);
+        marker.color(color);
+        marker.offset('-14%');
+        marker.label().enabled(true).position('centerLeft')
+                .offsetX(-5).anchor('right').textFormatter(function () {
+            return this.value + ' m.'
+        });
+        marker.hoverLabel().enabled(true).fontColor('#212121').fontWeight('600');
+        marker.selectLabel().enabled(true).fontColor('#212121').fontWeight('600');
+        marker.legendItem(false);
+        marker.type('ARROWHEAD');
+    }
+
+    // Create series
+    createBar(0, '#024174');
+    createBar(1, '#02579A');
+    createBar(2, '#1976D3');
+    createBar(3, '#42A5F6');
+    createBar(4, '#90CAF8');
+    createBar(5, '#b3e5fc');
+
+    // Turn on legend and sets settings
+    gauge.legend().enabled(true).useHtml(true)
+            .padding([0,30,0,30]).fontSize(12)
+            .position('left').align('top').itemsLayout('v');
+
+    // Set paginator in the bottom position
+    gauge.legend().paginator().orientation('bottom');
+
+    // Set color marker pointer for event legendItemMouseOver
+    gauge.legend().listen("legendItemMouseOver", function (e) {
+        gauge.getPointerAt(e.itemIndex).hover();
+        gauge.getPointerAt(e.itemIndex + 1).hover();
+        return false
+    });
+
+    // Set color marker pointer for event legendItemMouseOut
+    gauge.legend().listen("legendItemMouseOut", function (e) {
+        gauge.getPointerAt(e.itemIndex).unhover();
+        gauge.getPointerAt(e.itemIndex + 1).unhover();
+        return false
+    });
+
+    // Set axis scale settings
+    var scale = gauge.scale();
+    scale.ticks([0, 1000]);
+
+    // Enable axis
+    var axis = gauge.axis();
+    axis.offset('-11%');
+    axis.width('0%');
+
+    // Set axis labels formatter
+    axis.labels().useHtml(true).textFormatter('{%Value} m.');
+
+    // Set tooltip formatter
+    gauge.tooltip().useHtml(true).textFormatter(function () {
+        return '<span style="color: #EAEAEA;">' + this.getDataValue('country')
+                + ', ' + this.getDataValue('city') + '<br/><span style="font-size: 14px">'+ this.value+' m.</span></span>'
+    });
+    gauge.tooltip().titleFormatter(function () {
+        return this.getDataValue('name')});
+
+    // Set container id and initiate drawing
+    gauge.container('container');
+    gauge.draw();
+});
+// Create data
+var data = [
+    {
+        name: 'Burj Khalifa',
+        category: 'Mixed-Use',
+        country: 'United Arab Emirates',
+        city: 'Dubai',
+        value: 830
+    },
+    {
+        name: 'One World Trade Center',
+        category: 'Office',
+        country: 'United States',
+        city: 'New York City',
+        value: 541
+    },
+    {
+        name: '432 Park Avenue',
+        category: 'Residential',
+        country: 'United States',
+        city: 'New York City',
+        value: 425.5
+    },
+    {
+        name: 'JW Marriott Marquis Dubai',
+        category: 'Hotel',
+        country: 'United Arab Emirates',
+        city: 'Dubai',
+        value: 355
+    },
+    {
+        name: 'Moscow State University',
+        category: 'Educational',
+        country: 'Russia',
+        city: 'Moscow',
+        value: 240
+    },
+    {
+        name: 'Ulmer M?nster',
+        category: 'Religious',
+        country: 'Germany',
+        city: 'Ulm',
+        value: 162
+    },
+    {
+        name: 'Guy\'s Hospital',
+        category: 'Hospital',
+        country: 'United Kingdom',
+        city: 'London',
+        value: 149
+    }
+];
+        </script>
+    </body>
+</html>

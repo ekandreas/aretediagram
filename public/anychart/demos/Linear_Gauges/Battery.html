@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../../js/anychart.min.js"></script>
+        <script src="../../js/anychart-ui.min.js"></script>
+        
+        
+        
+        <title>Battery</title>
+        <style>
+         html, body, #container {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+         
+anychart.onDocumentReady(function () {
+    // Helper function to create gauge
+    function createGaugeBase(){
+        // Create gauge
+        var gauge = anychart.gauges.linear();
+        gauge.layout('horizontal');
+        gauge.background({stroke:'10 #545f69', fill: '#ffffff'});
+        gauge.margin([30, 45, 30, 30]);
+        gauge.padding(0);
+
+        // Set gauge tooltip
+        gauge.tooltip().useHtml(true).textFormatter('Value: {%Value}%');
+
+        // Create label to make gauge look like battery
+        var label = gauge.label();
+        label.text(null).position('right').anchor('right').width(20).height('30%');
+        label.offsetX('20px');
+        label.background({enabled: true, fill: "#545f69"});
+
+        // Set axis scale
+        var scale = gauge.scale();
+        scale.minimum(0);
+        scale.maximum(100);
+        scale.ticks().interval(10);
+
+        return gauge;
+    }
+
+    function batteryBar(value){
+        // Create gauge
+        var gauge = createGaugeBase();
+        gauge.data([value]);
+
+        // Create bar pointer
+        var batteryEnergy = gauge.bar(0);
+        batteryEnergy.name('Energy');
+        batteryEnergy.width('90%').offset(0);
+        batteryEnergy.fill(function () {
+            if (gauge.data().get(0, 'value') >=25) return '#545f69';
+            return '#D81F05'
+        });
+        batteryEnergy.stroke(null);
+        batteryEnergy.zIndex(11);
+        return gauge
+    }
+    function batteryLED(value){
+        // Create gauge
+        var gauge = createGaugeBase();
+        gauge.data([value]);
+
+        // Create LED pointer
+        var batteryEnergy = gauge.led(0);
+        batteryEnergy.name('Energy');
+        batteryEnergy.width('90%');
+
+        // Color settings
+        batteryEnergy.dimmer(function () {return '#ffffff'});
+        if (value < 25) batteryEnergy.colorScale().colors(['#D81F05', '#D81F05']);
+        else batteryEnergy.colorScale().colors(['#545f69', '#545f69']);
+
+        batteryEnergy.size(null);
+        batteryEnergy.count('10');
+        return gauge;
+    }
+
+    // Create layout table and set some settings
+    layoutTable = anychart.ui.table();
+    layoutTable.hAlign('center').vAlign('middle').useHtml(true).fontSize(16);
+    layoutTable.cellBorder(null);
+
+    // Put gauges into the layout table
+    layoutTable.contents([
+        ['Battery', null],
+        ['Gauge with Bar Pointer<br>' +
+            '<span style="color: #212121; font-size: 12px">Charged 5%</span>',
+        'Gauge with Bar Pointer<br>' +
+            '<span style="color: #212121; font-size: 12px">Charged 75 %</span>'],
+        [batteryBar(5), batteryBar(75)],
+        ['Gauge with LED Pointer<br>' +
+            '<span style="color: #212121; font-size: 12px">Charged 20%</span>',
+        'Gauge with LED Pointer<br>' +
+            '<span style="color: #212121; font-size: 12px">Charged 100%</span>'],
+        [batteryLED(20), batteryLED(100)]
+    ]);
+
+    // Set height for first row in layout table
+    layoutTable.getRow(0).height(40).fontSize(18);
+    layoutTable.getRow(1).height(50);
+    layoutTable.getRow(3).height(50);
+
+    // Merge cells in layout table where needed
+    layoutTable.getCell(0, 0).colSpan(2);
+
+    // Set container id and initiate drawing
+    layoutTable.container('container');
+    layoutTable.draw();
+});
+        </script>
+    </body>
+</html>

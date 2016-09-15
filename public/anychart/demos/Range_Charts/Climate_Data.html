@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../../js/anychart.min.js"></script>
+        <script src="../../js/anychart-ui.min.js"></script>
+        
+        
+        
+        <link rel="stylesheet" href="../../css/anychart-ui.min.css" />
+        
+        <title>Climate Data</title>
+        <style>
+         html, body, #container {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+         
+anychart.onDocumentReady(function () {
+    // create stage
+    stage = anychart.graphics.create('container');
+
+    // create column chart 1
+    chart_1 = anychart.column();
+    chart_1.bounds(0, 0, "100%", "75%");
+    // enable the grid
+    chart_1.grid(true);
+    chart_1.minorGrid(true);
+    // set chart title text settings
+    chart_1.title('Average max and min Temperatures in (?F) ' +
+            '\nand Precipitation Totals in mm.');
+
+    // create column chart 2
+    chart_2 = anychart.column();
+    chart_2.bounds(0, '75%', "100%", "25%");
+
+    // create range-data with passed data
+    var temperature_data = anychart.data.set([
+        {low: 22, high: 36, month: 'Jan'},
+        {low: 24, high: 40, month: 'Feb'},
+        {low: 30, high: 48, month: 'Mar'},
+        {low: 40, high: 59, month: 'Apr'},
+        {low: 50, high: 69, month: 'May'},
+        {low: 59, high: 78, month: 'June'},
+        {low: 65, high: 82, month: 'July'},
+        {low: 64, high: 81, month: 'Aug'},
+        {low: 56, high: 73, month: 'Sep'},
+        {low: 45, high: 62, month: 'Oct'}
+    ]);
+
+    // create column-data with passed data
+    var precipitation_data = anychart.data.set([
+        ['Jan', 3.6],
+        ['Feb', 2.8],
+        ['Mar', 4.2],
+        ['Apr', 4.5],
+        ['May', 4.2],
+        ['June', 4.3],
+        ['July', 3.7],
+        ['Aug', 4],
+        ['Sep', 4.6],
+        ['Oct', 4.4]
+    ]);
+
+    // sets mapping for range-bar series
+    var temperatures = temperature_data.mapAs(null, {x: ['month']});
+    // create series
+    var series_temperature = chart_1.rangeColumn(temperatures);
+    // set name
+    series_temperature.name("Temperatures");
+    // set color series
+    series_temperature.color("#DB5854");
+    // format labels
+    series_temperature.labels().enabled(true).textFormatter(function () {
+        return this.low + ' - ' + this.high
+    }).fontColor('#DB5854').fontWeight('bold');
+    // format tooltip
+    series_temperature.tooltip().titleFormatter(function () {
+        return 'Temperature in ' + this.x
+    });
+
+    // sets mapping for column-bar series
+    var precipitations = precipitation_data.mapAs({x: [0], value: [1]});
+    // create series
+    var series_precipitation = chart_2.column(precipitations);
+    // set name
+    series_precipitation.name('Precipitation');
+    // format labels
+    series_precipitation.labels().enabled(true).textFormatter(function () {
+        return this.value + 'mm'
+    });
+    // format tooltip
+    series_precipitation.tooltip().textFormatter(function () {
+        return 'Precipitation: ' + this.value + 'mm'
+    });
+
+    // set the max and min values on the axes
+    var yScalePrecipitation = chart_2.yScale();
+    yScalePrecipitation.minimum(0);
+    yScalePrecipitation.maximum(6);
+
+    // set container stage for the chart and initiate chart drawing
+    chart_1.container(stage).draw();
+    // set container stage for the chart and initiate chart drawing
+    chart_2.container(stage).draw();
+});
+    
+        </script>
+    </body>
+</html>

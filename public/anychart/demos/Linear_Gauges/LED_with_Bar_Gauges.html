@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../../js/anychart.min.js"></script>
+        <script src="../../js/anychart-ui.min.js"></script>
+        
+        
+        
+        <title>LED with Bar Gauges</title>
+        <style>
+         html, body, #container {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+         
+anychart.onDocumentReady(function () {
+    // Create and return simple linear gauge
+    function drawGauge(value, settings, inverse) {
+        // Create gauge with settings
+        var gauge = anychart.gauges.linear();
+        gauge.layout('horizontal');
+        gauge.padding(0);
+        gauge.margin([0,20,0,20]);
+        gauge.data([value, settings.critical]);
+
+        // Set scale for gauge
+        var scale = anychart.scales.linear();
+        scale.minimum(0);
+        scale.maximum(settings.maximum);
+        scale.ticks().interval(1);
+
+        // Set axis for gauge
+        var axis = gauge.axis(0);
+        axis.width('1%');
+        axis.offset('43%');
+        axis.scale(scale);
+        axis.orientation('bottom');
+        axis.labels().textFormatter(function(){
+            return this.value + 'm'
+        });
+
+        // Create and set bar point
+        var barSeries = gauge.bar(0);
+        barSeries.offset('3%');
+        barSeries.scale(scale);
+        barSeries.width('3%');
+        barSeries.fill('#545f69');
+        barSeries.stroke('#545f69');
+
+        // Create and set LED point
+        var ledPointer = gauge.led(1);
+        ledPointer.offset('10%');
+        ledPointer.width('30%');
+        ledPointer.size(null);
+        ledPointer.count(settings.count);
+        ledPointer.scale(scale);
+        ledPointer.dimmer(function () {return '#64b5f6'});
+        ledPointer.colorScale().colors(['#ef6c00', '#ef6c00']);
+        if (inverse) {
+            ledPointer.dimmer(function () {return '#ef6c00'});
+            ledPointer.colorScale().colors(['#64b5f6', '#64b5f6']);
+        }
+
+        // Create and set label with actual data
+        var labelBar = barSeries.label();
+        labelBar.enabled(true);
+        labelBar.position('center');
+        labelBar.offsetY('-20px');
+        labelBar.fontColor('#455a64');
+        labelBar.fontSize('21px');
+        labelBar.textFormatter(function () {
+            return '$' + gauge.data().get(0, 'value') + ' millions';
+        });
+        barSeries.hoverLabel(true);
+        barSeries.hoverLabel().fontColor('#455a64');
+
+        // Set gauge tooltip
+        gauge.tooltip().useHtml(true).textFormatter(function(){
+            return 'Acceptable: $' + gauge.data().get(1, 'value') + ' millions<br/>' +
+                    'Maximum on scale: $' + settings.maximum + ' millions';
+        });
+        gauge.tooltip().titleFormatter(function(){
+            return '$' + gauge.data().get(0, 'value') + ' millions';
+        });
+        return gauge
+    }
+
+    // Create gauges
+    var revenueGauge = drawGauge(12.45, {'maximum': 20, 'critical': 10, 'count': 20});
+    var expensesGauge = drawGauge(8.86, {'maximum': 10, 'critical': 8, 'count': 10}, true);
+    var profitGauge = drawGauge(3.5, {'maximum': 5, 'critical': 3, 'count': 5});
+
+    // Create stand alone legend
+    var legend = anychart.ui.legend();
+    legend.position('left').fontSize(14);
+    legend.items([
+        {'text': 'Actual', 'iconFill': '#545f69'},
+        {'text': 'Acceptable', 'iconFill': '#64b5f6'},
+        {'text': 'Critical', 'iconFill': '#ef6c00'}
+    ]);
+
+    // Create table to place gauges
+    layoutTable = anychart.ui.table();
+    layoutTable.hAlign('right').vAlign('middle').useHtml(true).fontSize(16);
+    layoutTable.cellBorder(null);
+
+    // Put gauges into the layout table
+    layoutTable.contents([
+        [null, 'Key Metrics (Brick = $1 million)'],
+        [null, legend],
+        ['Revenue', revenueGauge],
+        ['Expenses', expensesGauge],
+        ['Profit', profitGauge]
+    ]);
+
+    // Set height for first row in layout table
+    layoutTable.getRow(0).height(50).fontSize(22).hAlign('left').fontColor('#212121');
+    layoutTable.getRow(1).height(40).fontSize(16);
+    layoutTable.getCol(0).width(100);
+
+    // Set container id and initiate drawing
+    layoutTable.container('container');
+    layoutTable.draw();
+});
+        </script>
+    </body>
+</html>

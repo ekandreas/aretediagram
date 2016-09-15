@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../../js/anychart.min.js"></script>
+        <script src="../../js/anychart-ui.min.js"></script>
+        
+        
+        
+        <title>Top 10 Largest Cities</title>
+        <style>
+         html, body, #container {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+         
+
+anychart.onDocumentReady(function () {
+    // Set gauge type
+    gauge = anychart.gauges.linear();
+
+    // Set credits
+    var credits = gauge.credits();
+    credits.enabled(true);
+    credits.url('https://en.wikipedia.org/wiki/List_of_cities_proper_by_population');
+    credits.text('Data source: https://en.wikipedia.org/wiki/List_of_cities_proper_by_population');
+    credits.logoSrc('//en.wikipedia.org/static/favicon/wikipedia.ico');
+
+    // Sets our data
+    gauge.data(data);
+    gauge.padding([0,20,0,180]);
+    gauge.layout('horizontal');
+
+    // Set Chart Title
+    var title = gauge.title();
+    title.enabled(true).useHtml(true).padding([15, 0, 0, 0])
+            .text('Top 10 Largest Cities in the World<br>' +
+            '<span style="color: #212121; font-size: 12px">(According to Wikipedia.org)</span>');
+
+    // Set scale, 1 brick on Led series = 1 million people
+    var scale = anychart.scales.linear();
+    scale.minimum(0);
+    scale.maximum(25000000);
+    scale.ticks().interval(1000000);
+
+    for (var i=0; i<data.length; i++) {
+        // Set Led Pointer
+        var ledSeries = gauge.led(i);
+        ledSeries.width('5%');
+        ledSeries.offset((i * 9));
+        ledSeries.scale(scale);
+
+        // Color settings
+        ledSeries.dimmer(function () {return '#EAEAEA'});
+        ledSeries.colorScale().colors(['#64b5f6', '#64b5f6']);
+
+        // Set max number of bricks = 25 million
+        ledSeries.size(null);
+        ledSeries.count('25');
+
+        // Set Led Pointer Label
+        ledSeries.label().enabled(true)
+                .useHtml(true).position('centerBottom')
+                .offsetX(5).anchor('right')
+                .textFormatter(function () { return this.value.toLocaleString() +
+                    ', <span style="color: #212121; font-weight: 600">' +
+                    this.getDataValue('city') + '</span>'});
+        ledSeries.hoverLabel().enabled(true).fontColor('#212121').fontWeight('600');
+        ledSeries.selectLabel().enabled(true).fontColor('#212121').fontWeight('600');
+
+        // Create bar pointer
+        var barSeries = gauge.bar(i);
+        barSeries.offset((i * 9) - 1);
+        barSeries.width('0.5%');
+        barSeries.color('#1976d2');
+        barSeries.scale(scale);
+    }
+
+    // Set Tooltip
+    gauge.tooltip().textFormatter(function () {
+        return this.getDataValue('city') + ', ' +this.getDataValue('country')
+    });
+    gauge.tooltip().titleFormatter(function () {
+        return this.value.toLocaleString()
+    });
+
+    // Set container id and initiate drawing
+    gauge.container('container');
+    gauge.draw();
+});
+
+// Create data
+var data = [
+    {'city': 'Shanghai', 'value': 24256800, 'country': 'China'},
+    {'city': 'Karachi', 'value': 23500000, 'country': 'Pakistan'},
+    {'city': 'Bejing', 'value': 21516000, 'country': 'China'},
+    {'city': 'Delhi', 'value': 18686902, 'country': 'India'},
+    {'city': 'Lagos', 'value': 17060303, 'country': 'Nigeria'},
+    {'city': 'Tianjin', 'value': 15200000, 'country': 'China'},
+    {'city': 'Istambul', 'value': 14160467, 'country': 'Turkey'},
+    {'city': 'Tokyo', 'value': 13297629, 'country': 'Japan'},
+    {'city': 'Guangzhou', 'value': 13080500, 'country': 'China'},
+    {'city': 'Mumbai', 'value': 12442373, 'country': 'India'}
+];
+        </script>
+    </body>
+</html>

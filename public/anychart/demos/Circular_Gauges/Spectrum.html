@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../../js/anychart.min.js"></script>
+        <script src="../../js/anychart-ui.min.js"></script>
+        
+        
+        
+        <link rel="stylesheet" href="../../css/anychart-ui.min.css" />
+        
+        <title>Spectrum</title>
+        <style>
+         html, body, #container {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+         
+anychart.onDocumentReady(function () {
+    // set the gauge type
+    var data = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
+    var palette = anychart.palettes.distinctColors().colors(
+            [
+                '#FD0023',
+                '#FF3E0F',
+                '#FF7C00',
+                '#FFDC00',
+                '#BAFF01',
+                '#32FF02',
+                '#13FF80',
+                '#01F2FF',
+                '#1352FF',
+                '#5201FF',
+                '#E001FF',
+                '#FE00A3'
+            ]
+    );
+
+    gauge = anychart.circularGauge(data);
+    gauge.fill(null);
+    gauge.stroke(null);
+
+    function createMarker(i) {
+        var marker = gauge.marker(i);
+        marker.fill(palette.colorAt(i));
+        marker.size(8);
+        marker.position('outside');
+        marker.type('triangleDown');
+        marker.radius(92);
+        marker.stroke(null);
+    }
+
+    for (var i = 0; i < data.length; i++) {
+        createMarker(i);
+    }
+
+    // get range
+    var range = gauge.range();
+    range.from(0);
+    range.to(360);
+    range.startSize('17%');
+    range.endSize('17%');
+    range.radius(85);
+    range.zIndex(10);
+    range.fill(
+            [
+                '#FE0024',
+                '#FF6800',
+                '#FFFF01',
+                '#26FF02',
+                '#00FFFF',
+                '#1C01FF',
+                '#FF00FE',
+                '#FE0024'
+            ]
+    );
+
+    // axis settings
+    var axis = gauge.axis(0);
+    axis.radius(77.5);
+    axis.width(0.1);
+    axis.labels().textFormatter(function (label) {
+        return label.value + '&deg;'
+    }).useHtml(true);
+
+    // scale settings
+    var scale = axis.scale();
+    scale.minimum(0);
+    scale.maximum(360);
+    scale.ticks({interval: 30});
+    scale.minorTicks({interval: 10});
+
+    // ticks settings
+    var ticks = axis.ticks();
+    ticks.enabled(true);
+    ticks.length('2');
+    ticks.position('inside');
+
+    // minor ticks settings
+    var minorTicks = axis.minorTicks();
+    minorTicks.enabled(true);
+    minorTicks.length('1.5');
+    minorTicks.fill('#ddd');
+    minorTicks.position('inside');
+
+    // set container id and initiate drawing
+    gauge.container("container").draw();
+
+});
+
+    
+        </script>
+    </body>
+</html>

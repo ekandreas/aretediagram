@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../../js/anychart.min.js"></script>
+        <script src="../../js/anychart-ui.min.js"></script>
+        
+        
+        
+        <link rel="stylesheet" href="../../css/anychart-ui.min.css" />
+        
+        <title>Brand Engagement</title>
+        <style>
+         html, body, #container {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="text/javascript">
+         anychart.onDocumentReady(function() {
+  // prepare data for the chart
+  var data = [
+    {name:"General Public",           value: 3500},
+    {name:"Recongnizes Brand",        value: 3124},
+    {name:"Social Media Subscriber",  value: 1003},
+    {name:"Prospect Customer",        value:  252},
+    {name:"Customer",                 value:  200},
+    {name:"Loyal/Returning Customer", value:  137},
+    {name:"Brand Evangelist",         value:   50},
+  ];
+
+  // create funnel chart
+  chart = anychart.funnel(data);
+
+  // set container id for the chart
+  chart.container("container");
+
+  // set chart title
+  chart.title().useHtml(true);
+  chart.title("Brand Engagement/Awareness<br><span style='font-size:12'>Nation Wide Survey, 3500 people in 50 states</span>");
+
+  // set chart base width settings
+  chart.baseWidth("50%");
+  
+  // set the neck height
+  chart.neckHeight(0);
+
+  // set the neck height
+  chart.neckWidth(0);
+
+  // set chart labels settings
+  chart.labels().textFormatter("{%Name}");
+  // disable legend
+  chart.legend(false);
+
+  // initiate chart drawing
+  chart.draw();
+});
+        </script>
+    </body>
+</html>
