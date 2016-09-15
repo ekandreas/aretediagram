@@ -21,6 +21,7 @@ set('shared_files', []);
 set('env_vars', '/usr/bin/env');
 
 task('deploy:restart', function () {
+    run('sudo service php7.0-fpm restart');
 })->desc('Restarting apache2 and other stuff after deploy');
 
 task( 'deploy', [

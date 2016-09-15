@@ -8,16 +8,36 @@
     <link rel="stylesheet" href="/bower_components/handsontable/dist/handsontable.full.css">
 
     <link rel="stylesheet" href="https://cdn.anychart.com/css/latest/anychart-ui.min.css">
-    
+
 
 </head>
 
 <body>
 
-
-<div id="container"></div>
-
-    <div id="example"></div>
+    <!-- Uses a header that scrolls with the text, rather than staying
+      locked at the top -->
+    <div class="mdl-layout mdl-js-layout">
+        <header class="mdl-layout__header mdl-layout__header--scroll">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title">Aretediagram</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+            </div>
+        </header>
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <div class="mdl-grid">
+                    <div class="mdl-cell mdl-cell--6-col">
+                        <div id="container"></div>
+                    </div>
+                    <div class="mdl-cell mdl-cell--6-col">
+                        <div id="example"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
 
     <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
