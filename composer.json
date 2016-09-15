@@ -1,0 +1,11 @@
+{
+    "name": "ekandreas/aretediagram",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Andreas Ek",
+            "email": "andreas@elseif.se"
+        }
+    ],
+    "require": {}
+}
