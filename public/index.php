@@ -1,3 +1,13 @@
+<?php
+
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'save_data') {
+    $data = $_REQUEST['data'];
+    file_put_contents('data.json', json_encode($data));
+    exit;
+}
+
+?>
+
 <html>
 
 <head>
@@ -9,6 +19,7 @@
 
     <link rel="stylesheet" href="https://cdn.anychart.com/css/latest/anychart-ui.min.css">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 </head>
 
@@ -27,19 +38,14 @@
         </header>
         <main class="mdl-layout__content">
             <div class="page-content">
-                <div class="mdl-grid">
-                    <div class="mdl-cell mdl-cell--6-col">
                         <div id="container"></div>
-                    </div>
-                    <div class="mdl-cell mdl-cell--6-col">
                         <div id="example"></div>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
 
 
+    <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
     <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
     <script src="https://cdn.anychart.com/js/7.11.1/anychart-bundle.min.js"></script>
     <script src="/bower_components/handsontable/dist/handsontable.full.js"></script>
@@ -47,42 +53,39 @@
 
     <script>
 
-        var data = [
-            ["", "Ford", "Volvo", "Toyota", "Honda"],
-            ["2016", 10, 11, 12, 13],
-            ["2017", 20, 11, 14, 13],
-            ["2018", 30, 15, 12, 13]
-        ];
+        var data = <?php echo file_get_contents('data.json'); ?>
 
-        var container = document.getElementById('example');
-        var hot = new Handsontable(container, {
-            data: data,
-            rowHeaders: true,
-            colHeaders: true
-        });
+        var loadChart = function(hot) {
 
+            if(hot) {
+                data = hot.getData();
+                $('#container').html('');
+                $.ajax({
+                    url: '/',
+                    type: 'POST',
+                    data: {
+                        'action':'save_data',
+                        'data': data
+                    },
+                    success: function(data) {
+                    }
+                });
+            } else {
 
-    </script>
+            }
 
+            var cloneOfData = JSON.parse(JSON.stringify(data));
 
-    <script type="text/javascript">
+            var graf_data = cloneOfData.splice(1);
 
-        anychart.onDocumentReady(function() {
-            // create data set on our data
-            var dataSet = anychart.data.set([
-                ['2007', 1368763, 1991297, 431097],
-                ['2008', 799873, 1254823, 561983],
-                ['2009', 1497653, 1732987, 1019874],
-                ['2010', 1351874, 332871, 2027634],
-                ['2011', 1582987, 649853, 1961085]
-            ]);
+            var dataSet = anychart.data.set(graf_data);
 
-            // map data for the first series, take x from the zero column and value from the first column of data set
             var data1 = dataSet.mapAs({x: [0], value: [1]});
-            // map data for the second series, take x from the zero column and value from the second column of data set
             var data2 = dataSet.mapAs({x: [0], value: [2]});
-            // map data for the third series, take x from the zero column and value from the third column of data set
             var data3 = dataSet.mapAs({x: [0], value: [3]});
+            var data4 = dataSet.mapAs({x: [0], value: [4]});
+            var data5 = dataSet.mapAs({x: [0], value: [5]});
+            var data6 = dataSet.mapAs({x: [0], value: [6]});
 
             // create radar chart
             chart = anychart.radar();
@@ -91,18 +94,18 @@
             chart.container('container');
 
             // set chart title text settings
-            chart.title('Region Sales by Year (2007-2011) (Stacked)');
+            chart.title(data[0][0]);
 
             // force chart to stack values by Y scale.
             chart.yScale().stackMode(anychart.enums.ScaleStackMode.VALUE);
 
             // set yAxis settings
-            chart.yAxis().stroke('#545f69');
-            chart.yAxis().ticks().stroke('#545f69');
+            //chart.yAxis().stroke('#545f69');
+            //chart.yAxis().ticks().stroke('#545f69');
 
             // set yAxis labels settings
-            chart.yAxis().labels().fontColor('#545f69')
-                .textFormatter(function() {return this.value / 1000000 + 'M'});
+            //chart.yAxis().labels().fontColor('#545f69')
+            //    .textFormatter(function() {return this.value / 1000000 + 'M'});
 
             // set xAxis labels appearance settings
             var xAxisLabels = chart.xAxis().labels();
@@ -114,20 +117,50 @@
                 .position('bottom')
                 .enabled(true);
 
-            // create first series with mapped data and appearance settings
             var series1 = chart.area(data1);
-            series1.name('Arizona');
+            series1.name(data[0][1]);
 
-            // create second series with mapped data and appearance settings
             var series2 = chart.area(data2);
-            series2.name('Florida');
+            series2.name(data[0][2]);
 
-            // create third series with mapped data and appearance settings
             var series3 = chart.area(data3);
-            series3.name('Nevada');
+            series3.name(data[0][3]);
+
+            var series4 = chart.area(data4);
+            series4.name(data[0][4]);
+
+            var series5 = chart.area(data5);
+            series5.name(data[0][5]);
+
+            var series6 = chart.area(data6);
+            series6.name(data[0][6]);
 
             // initiate chart drawing
             chart.draw();
+        };
+
+        anychart.onDocumentReady(function() {
+        });
+
+        var container = document.getElementById('example');
+        var hot = new Handsontable(container, {
+            data: data,
+            rowHeaders: true,
+            colHeaders: true,
+            afterChange: function (changes, source) {
+                loadChart(hot);
+            }
+        });
+
+
+    </script>
+
+
+    <script type="text/javascript">
+
+
+        $(function() {
+            //loadChart();
         });
 
     </script>
