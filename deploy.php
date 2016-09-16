@@ -17,7 +17,7 @@ set('env', 'production');
 set('keep_releases', 10);
 set('shared_dirs', []);
 set('writable_dirs', []);
-set('shared_files', []);
+set('shared_files', ['public/data.json']);
 set('env_vars', '/usr/bin/env');
 
 task('deploy:restart', function () {
